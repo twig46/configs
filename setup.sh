@@ -18,8 +18,8 @@ sudo pacman -Sy --noconfirm \
 #git clone https://github.com/twig46/configs.git "$HOME/configs"
 
 # 4. Move configurations into place
-mv "$HOME/configs/.config/"* "$HOME/.config/" || true
-sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/ || true
+mv "$HOME/configs/.config/"* "$HOME/.config/" -r
+sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/ -r
 
 # 🟢 Enable SDDM display manager on boot
 sudo systemctl enable sddm.service
@@ -44,7 +44,8 @@ makepkg -si --noconfirm
 cd ..
 
 # 7. Install your AUR packages
-yay -S --noconfirm ttf-jetbrains-mono-nerd zen-browser-bin papirus-icon-theme-git
+yay -S --noconfirm ttf-jetbrains-mono-nerd zen-browser-bin
 
+ls /etc/share/sddm/themes/ | echo
 echo "✅ Setup complete! Reboot or relogin to apply changes."
 
