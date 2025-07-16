@@ -2,30 +2,35 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# 0. Enable multilib repo before installing any packages
+# 0. Enable multilib early
 sudo sed -i '/^\[multilib\]/,/Include/s/^#//' /etc/pacman.conf || true
-sudo pacman -Sy --noconfirm  # Refresh after enabling multilib
+sudo pacman -Sy --noconfirm
 
-# 1. Connect to Wi‑Fi
-#nmcli device wifi connect 'Mice' --ask
-
-# 2. Install essential packages
+# 1. Install core packages including SDDM and Qt dependencies
 sudo pacman -Sy --noconfirm \
-  fuzzel waybar git kitty fish hyprland hyprpaper sddm yazi feh fastfetch \
-  vim rclone 7zip
+  sddm qt5-declarative qt6-declarative qt6-svg \
+  fuzzel waybar git kitty fish hyprland hyprpaper \
+  yazi feh fastfetch vim rclone 7zip
 
-# 3. Clone your personal configs
-#git clone https://github.com/twig46/configs.git "$HOME/configs"
+# 2. Clone your personal configs
+git clone https://github.com/twig46/configs.git "$HOME/configs"
 
-# 4. Move configurations into place
-mv "$HOME/configs/.config/"* "$HOME/.config/" || true
+# 3. Merge ~/.config directory (including systemd configs) safely
+rsync -a --remove-source-files "$HOME/configs/.config/" "$HOME/.config/" || true
+find "$HOME/configs/.config" -type d -empty -delete || true
+
+# 4. Initialize SDDM theme structure by running a harmless test
+sudo -u "$USER" sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/ || true
+
+# Ensure themes folder exists, then move your 'silent' theme in place
+sudo mkdir -p /usr/share/sddm/themes
 sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/ || true
 
-# 🟢 Enable SDDM display manager on boot
+# 5. Enable SDDM service
 sudo systemctl enable sddm.service
 
-# 5. Configure SDDM with your preferences
-sudo bash -c 'cat > /etc/sddm.conf <<EOF
+# 6. Write your SDDM configuration
+sudo tee /etc/sddm.conf > /dev/null <<EOF
 [Theme]
 Current=silent
 
@@ -35,17 +40,18 @@ EnableHiDPI=true
 [General]
 InputMethod=qtvirtualkeyboard
 GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/silent/components/,QT_IM_MODULE=qtvirtualkeyboard,QT_SCREEN_SCALE_FACTORS=1.5,QT_FONT_DPI=192
-EOF'
+EOF
 
-# 6. Install yay (AUR helper)
+# 7. Install yay (AUR helper)
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si --noconfirm
 cd ..
 
-# 7. Install your AUR packages
-yay -S --noconfirm ttf-jetbrains-mono-nerd zen-browser-bin
+# 8. Install AUR packages (fonts + others)
+yay -S --noconfirm ttf-jetbrains-mono ttf-jetbrains-mono-nerd zen-browser-bin papirus-icon-theme-git
+fc-cache -fv
 
-ls /etc/share/sddm/themes/ | echo
-echo "✅ Setup complete! Reboot or relogin to apply changes."
+echo "✅ Setup complete! SDDM theme directories initialized before move, theme installed, SDDM enabled. Reboot to apply."
+
 
