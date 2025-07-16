@@ -1,0 +1,19 @@
+[Unit]
+Description=Rclone Mount OneDrive
+Documentation=https://rclone.org/docs/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rclone mount onedrive: %h/Onedrive \
+    --vfs-cache-mode full
+ExecStop=/bin/fusermount -u %h/Onedrive
+Restart=on-failure
+Environment=PATH=/usr/bin
+Environment=HOME=%h
+WorkingDirectory=%h
+
+[Install]
+WantedBy=default.target
+
