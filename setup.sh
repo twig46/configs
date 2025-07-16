@@ -7,7 +7,7 @@ sudo sed -i '/^\[multilib\]/,/Include/s/^#//' /etc/pacman.conf || true
 sudo pacman -Sy --noconfirm  # Refresh after enabling multilib
 
 # 1. Connect to Wi‑Fi
-nmcli device wifi connect 'Mice' --ask
+#nmcli device wifi connect 'Mice' --ask
 
 # 2. Install essential packages
 sudo pacman -Sy --noconfirm \
@@ -15,7 +15,7 @@ sudo pacman -Sy --noconfirm \
   vim rclone 7zip
 
 # 3. Clone your personal configs
-git clone https://github.com/twig46/configs.git "$HOME/configs"
+#git clone https://github.com/twig46/configs.git "$HOME/configs"
 
 # 4. Move configurations into place
 mv "$HOME/configs/.config/"* "$HOME/.config/" || true
