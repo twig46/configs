@@ -1,6 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash~
 set -euo pipefail
 IFS=$'\n\t'
+
+CONF="$HOME/.config/hypr/hyprpaper.conf"
+WALL="$HOME/.config/hypr/wall.png"
 
 # 0. Enable multilib early
 sudo sed -i '/^\[multilib\]/,/Include/s/^#//' /etc/pacman.conf || true
@@ -10,15 +13,27 @@ sudo pacman -Sy --noconfirm
 sudo pacman -Sy --noconfirm \
   sddm qt5-declarative qt6-declarative qt6-svg \
   fuzzel waybar git kitty fish hyprland hyprpaper \
-  yazi feh fastfetch vim rclone 7zi qt6-svg \
-  qt6-virtualkeyboard qt6-multimedia-ffmpegp
+  yazi feh fastfetch vim rclone 7zip qt6-svg \
+  qt6-virtualkeyboard qt6-multimedia-ffmpeg
 
-# 2. Clone your personal configs
-git clone https://github.com/twig46/configs.git "$HOME/configs"
+sudo cp "$HOME/configs/.config" "$HOME" -r
 
-# 3. Merge ~/.config directory (including systemd configs) safely
-rsync -a --remove-source-files "$HOME/configs/.config/" "$HOME/.config/" || true
-find "$HOME/configs/.config" -type d -empty -delete || true
+mkdir -p "${CONF%/*}"
+
+MONITOR=$(hyprctl monitors | awk '/^Monitor/ {print $2; exit}')
+if [ -z "$MONITOR" ]; then
+  echo "⚠️ No monitor detected via 'hyprctl monitors'."
+  exit 1
+fi
+
+cat > "$CONF" <<EOF
+preload = $WALL
+wallpaper = $MONITOR,$WALL
+EOF
+
+echo "✅ Written hyprpaper.conf:"
+echo "  preload = $WALL"
+echo "  wallpaper = $MONITOR,$WALL"
 
 # 4. Initialize SDDM theme structure by running a harmless test
 sudo -u "$USER" sddm-greeter-qt6 --test-mode --theme /usr/share/sddm/themes/ || true
