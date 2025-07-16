@@ -2,49 +2,45 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# 1. Connect to Wi-Fi (prompting for password)
+# 1. Connect to Wi‑Fi
 nmcli device wifi connect 'Mice' --ask
 
 # 2. Install essential packages
 sudo pacman -Sy --noconfirm \
   fuzzel waybar git kitty fish hyprland hyprpaper sddm yazi feh fastfetch \
-  vim rclone p7zip
+  vim rclone 7zip
 
-# 3. Move your configurations
-mv "$HOME/configs/.config/"* "$HOME/.config/"
-sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/
+# 3. Clone your personal configs
+git clone https://github.com/twig46/configs.git "$HOME/configs"
 
-# 4. Configure SDDM: adjust QT scale and set default theme
-sudo bash -c 'cat >> /etc/sddm.conf <<EOF
+# 4. Move configurations into place
+mv "$HOME/configs/.config/"* "$HOME/.config/" || true
+sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/ || true
+
+# 5. Configure SDDM with your preferences
+sudo bash -c 'cat > /etc/sddm.conf <<EOF
 [Theme]
 Current=silent
 
+[Wayland]
+EnableHiDPI=true
+
 [General]
-DisplayCommand=
+InputMethod=qtvirtualkeyboard
+GreeterEnvironment=QML2_IMPORT_PATH=/usr/share/sddm/themes/silent/components/,QT_IM_MODULE=qtvirtualkeyboard,QT_SCREEN_SCALE_FACTORS=1.5,QT_FONT_DPI=192
 EOF'
 
-sudo sed -i 's|#?QtScaling=.*|QtScaling=1.5|' /etc/sddm.conf || \
-  sudo bash -c 'echo "QtScaling=1.5" >> /etc/sddm.conf'
+# 6. Enable multilib (Steam support disabled)
+sudo sed -i '/\#\[multilib\]/,+1s/^#//' /etc/pacman.conf || true
+echo "Note: multilib repo enabled, but Steam installation skipped."
 
-# 5. Enable multilib and install Steam
-sudo sed -i '/\#\[multilib\]/,+1s/^#//' /etc/pacman.conf
-sudo pacman -Sy --noconfirm steam
-
-# 6. Install SilentSDDM from GitHub
-git clone -b main --depth=1 https://github.com/uiriansan/SilentSDDM.git
-cd SilentSDDM
-./install.sh
-cd ..
-
-# 7. Install yay helper
+# 7. Install yay (AUR helper)
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si --noconfirm
 cd ..
 
-# 8. Install AUR packages
+# 8. Install your AUR packages
 yay -S --noconfirm ttf-jetbrains-mono-nerd zen-browser-bin papirus-icon-theme-git
 
 echo "✅ Setup complete! Reboot or relogin to apply changes."
