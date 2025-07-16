@@ -10,7 +10,8 @@ sudo pacman -Sy --noconfirm
 sudo pacman -Sy --noconfirm \
   sddm qt5-declarative qt6-declarative qt6-svg \
   fuzzel waybar git kitty fish hyprland hyprpaper \
-  yazi feh fastfetch vim rclone 7zip
+  yazi feh fastfetch vim rclone 7zi qt6-svg \
+  qt6-virtualkeyboard qt6-multimedia-ffmpegp
 
 # 2. Clone your personal configs
 git clone https://github.com/twig46/configs.git "$HOME/configs"
@@ -49,7 +50,7 @@ makepkg -si --noconfirm
 cd ..
 
 # 8. Install AUR packages (fonts + others)
-yay -S --noconfirm ttf-jetbrains-mono ttf-jetbrains-mono-nerd zen-browser-bin papirus-icon-theme-git
+yay -S --noconfirm ttf-jetbrains-mono-nerd zen-browser-bin papirus-icon-theme-git
 fc-cache -fv
 
 echo "✅ Setup complete! SDDM theme directories initialized before move, theme installed, SDDM enabled. Reboot to apply."
