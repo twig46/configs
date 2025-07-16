@@ -1,4 +1,4 @@
-#!/usr/bin/env bash~
+#!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
 
@@ -16,7 +16,8 @@ sudo pacman -Sy --noconfirm \
   yazi feh fastfetch vim rclone 7zip qt6-svg \
   qt6-virtualkeyboard qt6-multimedia-ffmpeg
 
-sudo cp "$HOME/configs/.config" "$HOME" -r
+sudo cp -r "$HOME/configs/.config" "$HOME"
+
 
 mkdir -p "${CONF%/*}"
 
