@@ -11,7 +11,7 @@ sudo pacman -Sy --noconfirm \
   vim rclone 7zip
 
 # 3. Clone your personal configs
-git clone https://github.com/twig46/configs.git "$HOME/configs"
+
 
 # 4. Move configurations into place
 mv "$HOME/configs/.config/"* "$HOME/.config/" || true
