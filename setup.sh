@@ -21,9 +21,9 @@ sudo cp -r "$HOME/configs/.config" "$HOME"
 
 mkdir -p "${CONF%/*}"
 
-MONITOR=$(hyprctl monitors | awk '/^Monitor/ {print $2; exit}')
+MONITOR=$(xrandr --listactivemonitors | awk '/\+/ {print $4; exit}')
 if [ -z "$MONITOR" ]; then
-  echo "⚠️ No monitor detected via 'hyprctl monitors'."
+  echo "❗ Error: could not detect monitor via xrandr."
   exit 1
 fi
 
