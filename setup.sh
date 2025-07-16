@@ -18,8 +18,8 @@ sudo pacman -Sy --noconfirm \
 #git clone https://github.com/twig46/configs.git "$HOME/configs"
 
 # 4. Move configurations into place
-mv "$HOME/configs/.config/"* "$HOME/.config/" -r
-sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/ -r
+mv "$HOME/configs/.config/"* "$HOME/.config/" || true
+sudo mv "$HOME/configs/silent" /usr/share/sddm/themes/ || true
 
 # 🟢 Enable SDDM display manager on boot
 sudo systemctl enable sddm.service
