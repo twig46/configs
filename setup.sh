@@ -17,14 +17,14 @@ sudo pacman -Sy --noconfirm \
   qt6-multimedia-ffmpeg
 
 # 2. Clone your configs and copy .config directory
-git clone https://github.com/twig46/configs.git "$HOME/configs"
-cp -r "$HOME/configs/.config" "$HOME/"
+
+sudo cp -r "$HOME/configs/.config" "$HOME/"
 
 # 3. Initialize a simple hyprpaper.conf (to be overwritten later)
 mkdir -p "${CONF%/*}"
 cat >"$CONF" <<EOF
 preload = $WALL
-wallpaper = WALL,$WALL
+wallpaper = DP-1,$WALL
 EOF
 echo "✅ Initial hyprpaper.conf created (will be dynamically updated)."
 
@@ -59,25 +59,13 @@ yay -S --noconfirm \
   hyprland-monitor-attached
 fc-cache -fv
 
-# 8. Create auto-update script for wallpaper
-mkdir -p "$HOME/.local/bin"
-cat > "$HOME/.local/bin/hyprpaper-update.sh" <<'EOF'
-#!/usr/bin/env bash
-WALL=~/.config/hypr/wall.png
-MON=$(hyprctl monitors | awk '/^Monitor/ {print $2; exit}')
-[ -n "$MON" ] || exit 1
-cat > ~/.config/hypr/hyprpaper.conf <<E
-preload = $WALL
-wallpaper = $MON,$WALL
-E
-EOF
-chmod +x "$HOME/.local/bin/hyprpaper-update.sh"
-
 # 9. Hook monitor-attached into hyprland.conf
-HYPRCONF="$HOME/.config/hypr/hyprland.conf"
-LINE="exec-once = hyprland-monitor-attached ~/.local/bin/hyprpaper-update.sh"
-grep -qxF "$LINE" "$HYPRCONF" 2>/dev/null \
-  || printf "\n# Auto update wallpaper on monitor change\n$LINE\n" >> "$HYPRCONF"
+
+
+
+
+
+chsh -s /usr/local/bin/fish
 
 echo "✅ Integrated hyprland-monitor-attached into hyprland.conf." :contentReference[oaicite:1]{index=1}
 
