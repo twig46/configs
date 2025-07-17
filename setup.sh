@@ -21,11 +21,10 @@ sudo pacman -Sy --noconfirm \
 sudo cp -r "$HOME/configs/.config" "$HOME/"
 
 # 3. Initialize a simple hyprpaper.conf (to be overwritten later)
-sudo mkdir -p "${CONF%/*}"
-cat >"$CONF" <<EOF
-preload = $WALL
-wallpaper = DP-1,$WALL
-EOF
+sudo bash -c "mkdir -p '${CONF%/*}'"
+
+echo "preload = $WALL
+wallpaper = $MONITOR,$WALL" | sudo tee "$CONF" > /dev/null
 echo "✅ Initial hyprpaper.conf created (will be dynamically updated)."
 
 # 4. Initialize SDDM theme structure then install 'silent'
