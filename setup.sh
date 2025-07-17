@@ -21,7 +21,7 @@ sudo pacman -Sy --noconfirm \
 sudo cp -r "$HOME/configs/.config" "$HOME/"
 
 # 3. Initialize a simple hyprpaper.conf (to be overwritten later)
-mkdir -p "${CONF%/*}"
+sudo mkdir -p "${CONF%/*}"
 cat >"$CONF" <<EOF
 preload = $WALL
 wallpaper = DP-1,$WALL
@@ -65,7 +65,7 @@ fc-cache -fv
 
 
 
-chsh -s /usr/local/bin/fish
+chsh -s /usr/bin/fish
 
 echo "✅ Integrated hyprland-monitor-attached into hyprland.conf." :contentReference[oaicite:1]{index=1}
 
